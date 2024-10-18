@@ -70,15 +70,39 @@ func initialize() *cobra.Command {
 			configContent := fmt.Sprintf(`# Dattebayo Configuration File
 # Superuser credentials
 superuser:
-  # username of the superuser (change if needed)
+#   # username of the superuser (change if needed)
   username: %s
 
-  # password of the superuser (change if needed)
+#   # password of the superuser (change if needed)
   password: %s
 
 # General settings
 # timer before all the servers start (in seconds, default is 5)
 # start_timer: 5
+
+# DNS server settings
+# dns:
+#   # primary port for the DNS server (default is 53)
+#   primary_port: 53
+#   # fallback port for the DNS server. if primary port is in use or doesn't have privileges, the server will fall back to this port (default is 53535)
+#   fallback_port: 53535
+
+# Domain manager settings
+# domain_manager:
+#   # port for the domain manager server (default is 42424)
+#   port: 42424
+
+# Mail server settings
+# mail:
+#   # primary port for the mail server (default is 25)
+#   primary_port: 25
+#   # fallback port for the mail server. if primary port is in use or doesn't have privileges, the server will fall back to this port (default is 25252)
+#   fallback_port: 25252
+#   # port for mail server admin panel (default is 25253)
+#   admin_port: 25253
+#   # port for mail server webmail (default is 25254)
+#   webmail_port: 25254
+
 `, username, password)
 
 			if _, err := configFile.WriteString(configContent); err != nil {
