@@ -26,3 +26,4 @@ go.work.sum
 
 # Development output binaries
 bin/
+.DS_Store
