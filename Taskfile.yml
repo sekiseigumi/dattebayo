@@ -1,0 +1,27 @@
+version: '3'
+
+tasks:
+  build:
+    cmds:
+      - echo "Building..."
+      - go build -o bin/dattebayo main.go
+    desc: "Build the project"
+    deps:
+      - clean
+    silent: false
+    
+  clean:
+    cmds:
+      - echo "Cleaning..."
+      - rm -rf bin/*
+    desc: "Clean the project"
+    silent: false
+
+  run:
+    cmds:
+      - echo "Running..."
+      - go run bin/dattebayo
+    desc: "Run the project"
+    deps:
+      - build
+    silent: false
