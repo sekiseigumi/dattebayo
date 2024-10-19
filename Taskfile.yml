@@ -1,27 +1,70 @@
 version: '3'
 
+vars:
+  BINARY_NAME: dattebayo
+  BIN_PATH: '{{.PWD}}/bin'
+  CONFIG_FILE:
+    sh: |
+      if [ -f "$HOME/.zshrc" ]; then
+        echo "$HOME/.zshrc"
+      elif [ -f "$HOME/.bashrc" ]; then
+        echo "$HOME/.bashrc"
+      elif [ -f "$HOME/.config/fish/config.fish" ]; then
+        echo "$HOME/.config/fish/config.fish"
+      else
+        echo "$HOME/.profile"
+      fi
+
 tasks:
   build:
     cmds:
-      - echo "Building..."
-      - go build -o bin/dattebayo main.go
+      - rm -rf bin/*
+      - go build -o bin/{{.BINARY_NAME}} main.go
+      - echo "{{.BINARY_NAME}} built successfully"
     desc: "Build the project"
-    deps:
-      - clean
-    silent: false
-    
+    silent: true
+
   clean:
     cmds:
-      - echo "Cleaning..."
       - rm -rf bin/*
+      - echo "Cleaned bin directory"
     desc: "Clean the project"
-    silent: false
+    silent: true
 
-  run:
+  exec:
     cmds:
-      - echo "Running..."
-      - go run bin/dattebayo
-    desc: "Run the project"
-    deps:
-      - build
-    silent: false
+      - ./bin/{{.BINARY_NAME}} {{.CLI_ARGS}}
+    desc: "Execute the binary"
+
+  path:add:
+    cmds:
+      - |
+        if ! grep -q '{{.BIN_PATH}}' "{{.CONFIG_FILE}}" 2>/dev/null; then
+          echo 'export PATH="{{.BIN_PATH}}:$PATH"' >> "{{.CONFIG_FILE}}"
+          echo "PATH updated in {{.CONFIG_FILE}}"
+          echo "Please restart your shell or run 'source {{.CONFIG_FILE}}' to apply changes"
+        else
+          echo "PATH already set in {{.CONFIG_FILE}}"
+        fi
+    desc: "Add ./bin to PATH"
+    silent: true
+
+  path:remove:
+    cmds:
+      - |
+        if grep -q '{{.BIN_PATH}}' "{{.CONFIG_FILE}}" 2>/dev/null; then
+          TEMP_FILE=$(mktemp)
+          grep -v '{{.BIN_PATH}}' "{{.CONFIG_FILE}}" > "$TEMP_FILE"
+          mv "$TEMP_FILE" "{{.CONFIG_FILE}}"
+          echo "PATH entry removed from {{.CONFIG_FILE}}"
+          echo "Please restart your shell or run 'source {{.CONFIG_FILE}}' to apply changes"
+        else
+          echo "PATH entry not found in {{.CONFIG_FILE}}"
+        fi
+    desc: "Remove ./bin from PATH"
+    silent: true
+
+  default:
+    cmds:
+      - task --list
+    silent: true

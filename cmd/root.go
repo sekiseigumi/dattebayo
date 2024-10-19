@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/sekiseigumi/dattebayo/internal/dns"
+	"github.com/sekiseigumi/dattebayo/internal/logger"
 	"github.com/sekiseigumi/dattebayo/internal/tui"
 	"github.com/sekiseigumi/dattebayo/shared"
 	"github.com/spf13/cobra"
@@ -65,8 +67,25 @@ func Execute() error {
 				return fmt.Errorf("config file corrupted. missing superuser credentials. remove config file and run `dattebayo init` to initialize")
 			}
 
-			tuiInstance := tui.NewTUI(config)
+			log := logger.NewLogger()
+			log.Log("MAIN", "Dattebayo initialization started")
+
+			dnsServer := dns.NewDNSServer(config, log)
+			log.Log("MAIN", "DNS Server instance created")
+
+			tuiInstance := tui.NewTUI(config, dnsServer, log)
+			log.Log("MAIN", "TUI instance created")
+
+			go func() {
+				log.Log("MAIN", "Starting DNS Server...")
+				if err := dnsServer.Start(); err != nil {
+					log.Log("MAIN", fmt.Sprintf("Error starting DNS Server: %v", err))
+				}
+			}()
+
+			log.Log("MAIN", "Running TUI...")
 			if _, err := tuiInstance.Run(); err != nil {
+				log.Log("MAIN", fmt.Sprintf("Error running TUI: %v", err))
 				return err
 			}
 

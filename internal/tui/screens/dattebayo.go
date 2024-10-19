@@ -72,8 +72,7 @@ func (d DattebayoScreen) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tickMsg:
 		d.timer--
 		if d.timer <= 0 {
-			d.timer = 0
-			return d, nil
+			return screen().Switch(dashboard())
 		}
 		return d, tick
 	}

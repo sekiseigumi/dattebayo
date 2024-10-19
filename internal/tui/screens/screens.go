@@ -4,6 +4,8 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/sekiseigumi/dattebayo/internal/dns"
+	"github.com/sekiseigumi/dattebayo/internal/logger"
 	"github.com/sekiseigumi/dattebayo/shared"
 	"golang.org/x/term"
 )
@@ -13,9 +15,11 @@ type ScreenSwitcher struct {
 }
 
 type Globals struct {
-	width  int
-	height int
-	config shared.Config
+	width     int
+	height    int
+	config    shared.Config
+	dnsServer *dns.DNSServer
+	logger    *logger.Logger
 }
 
 var globals Globals
@@ -55,7 +59,7 @@ func screen() ScreenSwitcher {
 	}
 }
 
-func Initialize(config shared.Config) tea.Model {
+func Initialize(config shared.Config, dnsServer *dns.DNSServer, log *logger.Logger) tea.Model {
 
 	width, height, err := term.GetSize(int(os.Stdout.Fd()))
 
@@ -67,6 +71,8 @@ func Initialize(config shared.Config) tea.Model {
 	globals.width = width
 	globals.height = height
 	globals.config = config
+	globals.dnsServer = dnsServer
+	globals.logger = log
 
 	return screen()
 }
