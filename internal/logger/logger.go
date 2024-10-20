@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"sync"
 	"time"
 )
@@ -13,14 +14,12 @@ type LogEntry struct {
 
 type Logger struct {
 	entries []LogEntry
-	mu      sync.Mutex
-	notify  chan struct{}
+	mu      sync.RWMutex
 }
 
 func NewLogger() *Logger {
 	return &Logger{
 		entries: make([]LogEntry, 0),
-		notify:  make(chan struct{}, 100),
 	}
 }
 
@@ -35,20 +34,15 @@ func (l *Logger) Log(source, message string) {
 	}
 
 	l.entries = append(l.entries, entry)
-
-	select {
-	case l.notify <- struct{}{}:
-	default:
-	}
 }
 
-func (l *Logger) Entries() []LogEntry {
-	l.mu.Lock()
-	defer l.mu.Unlock()
+func (l *Logger) GetEntries() []LogEntry {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
 
 	return append([]LogEntry(nil), l.entries...)
 }
 
-func (l *Logger) Notify() <-chan struct{} {
-	return l.notify
+func (l *Logger) FormatEntry(entry LogEntry) string {
+	return fmt.Sprintf("[%s] %s: %s", entry.Timestamp.Format("15:04:05"), entry.Source, entry.Message)
 }

@@ -1,1 +1,114 @@
-SURELY SOMETHING GOOD SHALL HAPPEN
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⡽⠙⠉⠚⢄⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣣⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠼⢏⠛⠚⠂⠾⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠬⠂⠀⠛⡋⠒⠴⣀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠊⠀⠀⠀⠀⢲⣟⣛⠀⠀⠈⠢⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⠃⠀⠀⠀⠀⢀⡴⣼⠷⠀⠀⠀⠀⡄⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⢃⠀⠀⠀⠀⠀⠠⡧⣬⠇⠀⠀⠀⠀⢸⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡰⠏⠁⠀⠀⠀⠀⠀⢸⣟⣻⠀⠀⠀⠀⠀⠀⡄⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠔⠈⠀⠀⠀⠀⠀⠀⠀⠀⠐⣶⠴⠀⠀⠀⠀⠀⠀⢡⠀
+⠀⠀⠀⠀⠀⠀⠀⠤⠊⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣫⡻⠗⠀⠀⠀⠀⠀⠀⠀⡀
+⡀⠀⠀⠀⢀⣴⡧⣤⣤⡄⣤⢠⡴⠀⠀⠀⠀⠀⢀⢴⣿⢗⣿⠀⠀⠀⠀⠀⠀⠀⠇
+⣿⣆⠀⣰⣿⣿⣿⣿⣯⣿⣛⣴⠀⣀⠀⠀⠀⠠⠃⢘⠟⠒⠋⠀⠀⠀⠀⠀⠀⡀⢸
+⣿⠏⠰⠀⠀⠉⠻⢿⣿⣿⣿⣿⣼⡷⠀⣠⢠⠃⢀⠆⠀⠀⠀⠀⠀⠀⠀⠀⡠⠃⢸
+⠁⠀⠀⡇⣀⠴⠊⠁⠈⠙⢿⣿⣿⣿⣽⣏⣬⣶⡎⠀⢀⠀⣰⠀⠀⠀⠀⢠⢱⠀⢸
+
+--------------------------------------------------------------------------------
+
+> [Note] This is a work in progress. The project is not yet ready for use. I will
+> update this README as the project progresses.
+
+--------------------------------------------------------------------------------
+
+Welcome to DATTEBAYO!
+
+Unlike what the name might suggest, this is not a Naruto fan project. DATTEBAYO
+is a helps you do 127.0.0.1 things. Unleashes Super-Ultra-Big Ball Rasengan if 
+the superuser does it. Believe it!
+
+Components:
+-----------
+[!] A CLI + TUI for the application itself.
+[!] Local DNS server: DNS server that resolves all requests for a "local domain".
+[ ] Domain Manager: Frontend + API for adding, removing, and managing DNS records.
+[ ] Mail Server: Local mail server which can be used to send and receive emails.
+[ ] Mail Admin: A Frontend to manage mailboxes, aliases, and other mail server settings.
+[ ] WebMail: Webmail client to view and send emails among the "local domains".
+
+
+> Definition: "Local Domain"
+----------------------------
+This project uses the term "local domain" to refer to a domain that is not an
+actual domain on the internet. It is a domain that is only resolvable within
+the local network. For example, `example.local` is a local domain. It is not
+resolvable on the internet, but it can be resolved within the local network
+if the local DNS server is running.
+
+Following domains are considered "local domains", out of the box:
+    ao, ara, epic, fuck, internal, ki, local, localhost, lore, mail, mi, myth,
+    neko, os, pwn, root, test, thc, waifu
+
+> Configuration
+---------------
+The configuration file is located at `~/.dattebayo/config.toml`. The configuration
+file is in TOML format. The following is an example configuration file:
+
+# Dattebayo Configuration File
+# Superuser credentials
+# superuser:
+#   # username of the superuser (change if needed)
+#   username: username
+
+#   # password of the superuser (change if needed)
+#   password: password
+
+# General settings
+# timer before all the servers start (in seconds, default is 5)
+# start_timer: 5
+
+# DNS server settings
+# dns:
+#   # primary port for the DNS server (default is 53)
+#   primary_port: 53
+#   # fallback port for the DNS server. if primary port is in use or doesn't have privileges, the server will fall back to this port (default is 53535)
+#   fallback_port: 53535
+
+# Domain manager settings
+# domain_manager:
+#   # port for the domain manager server (default is 42424)
+#   port: 42424
+
+# Mail server settings
+# mail:
+#   # primary port for the mail server (default is 25)
+#   primary_port: 25
+#   # fallback port for the mail server. if primary port is in use or doesn't have privileges, the server will fall back to this port (default is 25252)
+#   fallback_port: 25252
+#   # port for mail server admin panel (default is 25253)
+#   admin_port: 25253
+#   # port for mail server webmail (default is 25254)
+#   webmail_port: 25254
+
+Configuring the DNS server:
+---------------------------
+
+Upon starting the program, the DNS server will start listening on the available
+port. But the system's DNS resolver will need to be configured to use the local
+DNS server. 
+
+    > MacOS
+    -------
+    I have written a shell script in `scripts/create_resolver.sh` that will create
+    a resolver file for each of the local domains in the `/etc/resolver` directory.
+
+    To use the script, run the following commands:
+
+    chmod +x scripts/create_resolver.sh
+    ./scripts/create_resolver.sh
+
+    Then you will need to restart the DNS resolver service:
+
+    sudo killall -HUP mDNSResponder
+
+* I will add instructions for other operating systems as the project progresses.
+

@@ -1,82 +1,64 @@
 package screens
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/sekiseigumi/dattebayo/internal/logger"
 )
 
 type DashboardScreen struct {
 	viewport viewport.Model
-	messages []string
 	ready    bool
 }
 
-type logMessage logger.LogEntry
-
-func waitForActivity(logger *logger.Logger) tea.Cmd {
-	return func() tea.Msg {
-		for {
-			select {
-			case <-logger.Notify():
-				entries := logger.Entries()
-				if len(entries) > 0 {
-					lastEntry := entries[len(entries)-1]
-					return logMessage(lastEntry)
-				}
-			}
-		}
-	}
-}
+type dashboardTickMsg time.Time
 
 func dashboard() tea.Model {
+	viewport := viewport.New(globals.width, globals.height-10)
+	messages := []string{}
+
+	for _, msg := range globals.logger.GetEntries() {
+		messages = append(messages, globals.logger.FormatEntry(msg))
+	}
+
+	viewport.SetContent(strings.Join(messages, "\n"))
+
 	return DashboardScreen{
-		messages: []string{},
+		viewport: viewport,
+		ready:    true,
 	}
 }
 
 func (d DashboardScreen) Init() tea.Cmd {
-	return tea.Batch(
-		waitForActivity(globals.logger),
-		tea.Tick(time.Second, func(t time.Time) tea.Msg {
-			return tickMsg{}
-		}),
-	)
+	return tickCmd()
+}
+
+func tickCmd() tea.Cmd {
+	return tea.Tick(time.Second, func(t time.Time) tea.Msg {
+		return dashboardTickMsg(t)
+	})
 }
 
 func (d DashboardScreen) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	var cmds []tea.Cmd
 
-	if !d.ready {
-		d.viewport = viewport.New(globals.width, globals.height-10)
-		d.ready = true
-	} else {
-		d.viewport.Width, d.viewport.Height = globals.width, globals.height-10
-	}
-
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		d.viewport.Width = globals.width
+		d.viewport.Height = globals.width - 10
+		d.updateContent()
+
 	case tea.KeyMsg:
-		if msg.Type == tea.KeyCtrlC {
+		if msg.String() == "ctrl+c" {
 			return d, tea.Quit
 		}
 
-		return d, nil
-
-	case logMessage:
-		d.messages = append(d.messages, msg.Message)
-		d.viewport.SetContent(strings.Join(d.messages, "\n"))
-		d.viewport.GotoBottom()
-
-		if len(d.messages) > 100 {
-			d.messages = d.messages[len(d.messages)-100:]
-		}
-
-		return d, nil
+	case dashboardTickMsg:
+		d.updateContent()
+		cmds = append(cmds, tickCmd())
 	}
 
 	d.viewport, cmd = d.viewport.Update(msg)
@@ -85,10 +67,21 @@ func (d DashboardScreen) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return d, tea.Batch(cmds...)
 }
 
-func (d DashboardScreen) View() string {
-	if !d.ready {
-		return "Starting up..."
+func (d *DashboardScreen) updateContent() {
+	if globals.logger == nil {
+		return
 	}
 
-	return fmt.Sprintf("%s\n\n%s", d.viewport.View(), "Press Ctrl+C to quit")
+	entries := globals.logger.GetEntries()
+	var content string
+	for _, entry := range entries {
+		content += globals.logger.FormatEntry(entry) + "\n"
+	}
+
+	d.viewport.SetContent(content)
+	d.viewport.GotoBottom()
+}
+
+func (d DashboardScreen) View() string {
+	return d.viewport.View() + "\n\nPress Ctrl+C to quit"
 }
