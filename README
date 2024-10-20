@@ -18,6 +18,9 @@
 > [Note] This is a work in progress. The project is not yet ready for use. I will
 > update this README as the project progresses.
 
+For Real Documentation, the Wiki: https://github.com/sekiseigumi/dattebayo/wiki
+is the place to go. This README is just a quick overview of the project.
+
 --------------------------------------------------------------------------------
 
 Welcome to DATTEBAYO!
@@ -36,8 +39,8 @@ Components:
 [ ] WebMail: Webmail client to view and send emails among the "local domains".
 
 
-> Definition: "Local Domain"
-----------------------------
+> Definition: Local Domain
+--------------------------
 This project uses the term "local domain" to refer to a domain that is not an
 actual domain on the internet. It is a domain that is only resolvable within
 the local network. For example, `example.local` is a local domain. It is not
@@ -47,6 +50,68 @@ if the local DNS server is running.
 Following domains are considered "local domains", out of the box:
     ao, ara, epic, fuck, internal, ki, local, localhost, lore, mail, mi, myth,
     neko, os, pwn, root, test, thc, waifu
+
+> Definition: System Domain
+---------------------------
+A system domain is a domain that the program uses for its own purposes. There
+are three system domains that the program uses:
+    domains.internal: Domain Manager and API are hosted on this domain.
+    admin.mail: Mail Admin panel is hosted on this domain.
+    user.mail: Webmail client is hosted on this domain.
+
+> Installation
+---------------
+There is no installation process as of now. The project is in development. You
+will need to clone the repository and build the project yourself.
+
+> Building
+-----------
+The project is written in Rust. You will need to have Go (https://go.dev) 
+installed on your system to build the project. Once you have Go installed, you
+can fork and clone the repository:
+    
+    git clone https://github.com/sekiseigumi/dattebayo.git
+
+The project uses `Taskfile` for building and running the project. Following are
+the available `task` commands:
+    * build:             Build the project in the `./bin` directory
+    * clean:             Clean the project (remove the `./bin` directory's contents)
+    * exec:              Execute the binary in the `./bin` directory
+    * path:add:          Add ./bin to PATH
+    * path:remove:       Remove ./bin from PATH
+
+To build the project, run the following command:
+    task build
+
+* You will need to have `task` installed on your system. You can install `task`
+  by following the instructions on the official website: https://taskfile.dev
+
+> Running
+----------
+To run the project, you can use the `task exec` command. Or you can add the
+`./bin` directory to your PATH and run the binary directly using:
+    
+    dattebayo or task exec
+
+* The project will need to be initialized before it can be used. The initialization
+process will create the configuration file and the necessary directories. To
+initialize the project, run the following command:
+
+    dattebayo init or dattebayo i
+
+or using the `task` command:
+
+    task exec -- init or task exec -- i
+
+You can also pass a configuration file to the application using the `--config` or
+`-c` flag. For example:
+
+    dattebayo --config /path/to/config.toml
+
+For more information on the available commands and flags, you can run the following
+command:
+
+    dattebayo --help or dattebayo -h
 
 > Configuration
 ---------------
@@ -111,4 +176,46 @@ DNS server.
     sudo killall -HUP mDNSResponder
 
 * I will add instructions for other operating systems as the project progresses.
+
+Querying the DNS server:
+------------------------
+
+You can query the DNS server using the `dig` command. For example:
+
+    dig @127.0.0.1 -p 53 domains.internal
+
+This will return the IP address that the domain `domains.internal` is pointing to,
+which should be the IP address of the local machine, in this case. 
+
+If you have configured the resolver files or updated the system's DNS settings to
+use the local DNS server, you can query the DNS server without specifying the IP
+address and port:
+
+    dig domains.internal
+
+The response should look like:
+
+➜ dig api.domains.internal
+
+; <<>> DiG 9.10.6 <<>> api.domains.internal
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 10525
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+;; QUESTION SECTION:
+;api.domains.internal.		IN	A
+
+;; Query time: 2 msec
+;; SERVER: 192.168.25.1#53(192.168.25.1)
+;; WHEN: Sat Oct 19 22:54:00 EDT 2024
+;; MSG SIZE  rcvd: 49
+
+* This assumes that you have the DNS server running on the default port (53). If
+you have changed the port or are using the fallback port, you will need to specify
+the port in the `dig` command. Alternatively, you can use something like `dnsmasq`
+to forward the queries to the local DNS server with the correct port.
+
 
